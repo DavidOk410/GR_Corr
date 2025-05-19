@@ -17,6 +17,23 @@ def print_plot(gr, depth):
     plt.tight_layout()
     plt.show()
 
+def plot_two_las(GR1, DEPT1, GR2, DEPT2, label1="Curve 1", label2="Curve 2"):
+    plt.figure(figsize=(8, 12))  # Taller plot since DEPT is vertical
+
+    plt.plot(GR1, DEPT1, label=label1, color='blue')
+    plt.plot(GR2, DEPT2, label=label2, color='green')
+
+    plt.gca().invert_yaxis()  # Depth should increase downward
+    plt.xlabel("GR")
+    plt.ylabel("DEPT")
+    plt.title("Comparison of Two GR Curves")
+    plt.ylim(top=1000)
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
+
+
 def print_k_shifting(k_values, distances, well_name="Well"):
     plt.figure(figsize=(10, 5))
     plt.plot(k_values, distances, marker='o', linestyle='-')

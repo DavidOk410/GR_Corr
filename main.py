@@ -27,12 +27,12 @@ well2389 = pars.parse_transformation("D:\Python\Abai\\2 cell\GR_2389.las", False
 
 
 wells = [injector, well3894, well8480, well24402, well2389]
+record_plots = []
 for i in range(len(wells) - 1):
     min_distance = 9999
     record_k = 0
     avg_distance = min_distance
     k_graph = []
-    record_plot = []
     for k in range(-50, 51):
         moved_wells = las.move_wells(wells, k)
         cutted = las.cut_depth_wells(moved_wells)
@@ -42,14 +42,15 @@ for i in range(len(wells) - 1):
         if distance < min_distance:
             min_distance = distance
             record_k = k
-            avg_distance = min_distance / len(cutted[i+1])
     percentage = 1 / math.exp(min_distance) * 100
     plots.print_k_shifting(range(-50, 51), k_graph)
     print(f"Minimum distance {min_distance:.4f} at value {record_k} (lower = more similar)")
-    print(f"Minimum distance {avg_distance:.4f} at value {record_k} (lower = more similar)")
     print(f"Similarity: {percentage:.2f}% (higher = more similar)")
+    min_distance_plot = las.cut_depth_wells(las.move_wells(wells, record_k))[i+1]
+    record_plots.append(min_distance_plot)
 
-print(record_plot)
-for well in record_plot:
+for well in record_plots:
     plots.print_plot(well["GR"], well["DEPT"])
+for well in record_plots:
+    plots.plot_two_las(wells[0]['GR'], wells[0]['DEPT'], well["GR"], well["DEPT"])
 
