@@ -33,7 +33,7 @@ for i in range(len(wells) - 1):
     avg_distance = min_distance
     k_graph = []
     record_plot = []
-    for k in range(-50, 50):
+    for k in range(-50, 51):
         moved_wells = las.move_wells(wells, k)
         cutted = las.cut_depth_wells(moved_wells)
         cutted_to_np = las.cutted_to_np(cutted)
@@ -44,7 +44,7 @@ for i in range(len(wells) - 1):
             record_k = k
             avg_distance = min_distance / len(cutted[i+1])
     percentage = 1 / math.exp(min_distance) * 100
-    plots.print_k_shifting(range(-50, 50), k_graph)
+    plots.print_k_shifting(range(-50, 51), k_graph)
     print(f"Minimum distance {min_distance:.4f} at value {record_k} (lower = more similar)")
     print(f"Minimum distance {avg_distance:.4f} at value {record_k} (lower = more similar)")
     print(f"Similarity: {percentage:.2f}% (higher = more similar)")
