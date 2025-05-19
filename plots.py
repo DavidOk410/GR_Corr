@@ -41,7 +41,10 @@ def print_k_shifting(k_values, distances, well_name="Well"):
     plt.xlabel("Shift k")
     plt.ylabel("Euclidean Distance")
     plt.grid(True)
-    plt.axvline(x=k_values[distances.index(min(distances))], color='red', linestyle='--', label='Min Distance')
+    plt.axvline(x=k_values[distances.index(max(distances))], color='red', linestyle='--', label='Min Distance')
     plt.xlim(left=-51, right=51)
     plt.legend()
     plt.show()
+
+def clear_plots():
+    plt.close('all')
