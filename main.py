@@ -6,8 +6,9 @@ from scipy.spatial.distance import euclidean
 import las_files as las
 import parsing as pars
 import plots
-import sklearn as sk
+import correlation as corr
 import matplotlib.pyplot as plt
+import dtw
 
 window_size = 200
 window_step = 100 #15 fits the best
@@ -27,29 +28,25 @@ plt.cla()     # Clears the current axes
 plt.close()
 
 wells = [injector, well3894, well8480, well24402, well2389]
-record_plots = []
-for i in range(len(wells) - 1):
-    min_distance = -9999
-    record_k = 0
-    avg_distance = min_distance
-    k_graph = []
-    for k in range(-50, 51):
-        moved_wells = las.move_wells(wells, k)
-        cutted = las.cut_depth_wells(moved_wells)
-        cutted_to_np = las.cutted_to_np(cutted)
-        distance = sk.metrics.r2_score(cutted_to_np[0], cutted_to_np[i+1])
-        k_graph.append(distance)
-        if distance > min_distance:
-            min_distance = distance
-            record_k = k
-    percentage = 1 / math.exp(min_distance) * 100
-    plots.print_k_shifting(range(-50, 51), k_graph)
-    print(f"Minimum distance {min_distance:.4f} at value {record_k} (lower = more similar)")
-    min_distance_plot = las.cut_depth_wells(las.move_wells(wells, record_k))[i+1]
-    record_plots.append(min_distance_plot)
 
-for well in record_plots:
-    plots.print_plot(well["GR"], well["DEPT"])
-for well in record_plots:
-    plots.plot_two_las(wells[0]['GR'], wells[0]['DEPT'], well["GR"], well["DEPT"])
+#path, cost_mat = dtw.dp()
+
+
+# R2 SCORE PRINT
+record_plots = corr.r2_score_correlation(wells)
+print(len(record_plots))
+for i, well in enumerate(record_plots):
+    if i == 1:
+        plots.plot_two_las(wells[0], well, title_name="R2_SCORE")
+
+#NORMALIZE CROSS CORRELATION
+cutted = las.cut_depth_wells(wells)
+copy = cutted.copy()
+plots.plot_two_las(wells[0], copy[2], title_name="Initial") #INITIAL
+cutted_to_np = las.cutted_to_np(cutted)
+best_lag, corr = corr.normalized_cross_correlation(cutted_to_np[0], cutted_to_np[2])
+print(f"lag {best_lag:.4f}")
+best_lag_plot = las.well_shifting(cutted[2], best_lag)
+plots.plot_two_las(wells[0], best_lag_plot, title_name="NCC")
+
 

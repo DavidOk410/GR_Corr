@@ -17,8 +17,11 @@ def print_plot(gr, depth):
     plt.tight_layout()
     plt.show()
 
-def plot_two_las(GR1, DEPT1, GR2, DEPT2, label1="Curve 1", label2="Curve 2"):
+def plot_two_las(injector, well, label1="Curve 1", label2="Curve 2", title_name="Title"):
     plt.figure(figsize=(8, 12))  # Taller plot since DEPT is vertical
+
+    GR1, DEPT1 = injector['GR'], injector['DEPT']
+    GR2, DEPT2 = well['GR'], well['DEPT']
 
     plt.plot(GR1, DEPT1, label=label1, color='blue')
     plt.plot(GR2, DEPT2, label=label2, color='green')
@@ -26,18 +29,19 @@ def plot_two_las(GR1, DEPT1, GR2, DEPT2, label1="Curve 1", label2="Curve 2"):
     plt.gca().invert_yaxis()  # Depth should increase downward
     plt.xlabel("GR")
     plt.ylabel("DEPT")
-    plt.title("Comparison of Two GR Curves")
+    plt.title(title_name)
     plt.ylim(top=1000)
+    plt.xlim(left=0)
     plt.grid(True)
     plt.legend()
     plt.show()
 
 
 
-def print_k_shifting(k_values, distances, well_name="Well"):
+def print_k_shifting(k_values, distances, title_name = "Title"):
     plt.figure(figsize=(10, 5))
     plt.plot(k_values, distances, marker='o', linestyle='-')
-    plt.title(f"Euclidean Distance vs Shift (k) for {well_name}")
+    plt.title(title_name)
     plt.xlabel("Shift k")
     plt.ylabel("Euclidean Distance")
     plt.grid(True)

@@ -33,13 +33,16 @@ def compress_well_multiplier(well, multiplier):
     df = pd.DataFrame(well_step, columns=['DEPT', 'GR'])
     return df
 
-def move_wells(wells, k = 0):
-    moved_wells = []
+def well_shifting(well, k = 0):
+    moved_well = well.copy()
+    moved_well['DEPT'] = moved_well['DEPT'] + k
+    return moved_well
+
+def wells_shifted(wells, k = 0):
+    moved_wells = [wells[0]]
     for i, well in enumerate(wells):
-        moved_well = well.copy()
         if i != 0:
-            moved_well['DEPT'] = moved_well['DEPT'] + k
-        moved_wells.append(moved_well)
+            moved_wells.append(well_shifting(well, k))
     return moved_wells
 
 def cut_depth_wells(wells):
