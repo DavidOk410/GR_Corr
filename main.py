@@ -8,7 +8,6 @@ import parsing as pars
 import plots
 import correlation as corr
 import matplotlib.pyplot as plt
-import dtw
 
 window_size = 200
 window_step = 100 #15 fits the best
@@ -29,8 +28,12 @@ plt.close()
 
 wells = [injector, well3894, well8480, well24402, well2389]
 
-#path, cost_mat = dtw.dp()
-
+#DTW Dynamic Time Warping
+record_plots = corr.dtw_distance_correlation(wells)
+print(len(record_plots))
+for i, well in enumerate(record_plots):
+    if i == 1:
+        plots.plot_two_las(wells[0], well, title_name="DTW")
 
 # R2 SCORE PRINT
 record_plots = corr.r2_score_correlation(wells)
