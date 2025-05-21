@@ -59,7 +59,7 @@ def dtw_distance_correlation(wells):
             cutted = las.cut_depth_wells(moved_wells)
             cutted_to_np = las.cutted_to_np(cutted)
             print(cutted_to_np, cutted_to_np[0], cutted_to_np[i + 1])
-            distance, _ = fastdtw(cutted_to_np[0], cutted_to_np[i + 1], dist=euclidean)
+            distance, _ = fastdtw(cutted_to_np[0], cutted_to_np[i + 1])
             k_graph.append(distance)
 
             if distance < min_distance:

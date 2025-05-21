@@ -8,10 +8,10 @@ import parsing as pars
 import plots
 import correlation as corr
 import matplotlib.pyplot as plt
+import dtw
 
 window_size = 200
 window_step = 100 #15 fits the best
-
 
 # Разбиение на окна
 
@@ -28,12 +28,6 @@ plt.close()
 
 wells = [injector, well3894, well8480, well24402, well2389]
 
-#DTW Dynamic Time Warping
-record_plots = corr.dtw_distance_correlation(wells)
-print(len(record_plots))
-for i, well in enumerate(record_plots):
-    if i == 1:
-        plots.plot_two_las(wells[0], well, title_name="DTW")
 
 # R2 SCORE PRINT
 record_plots = corr.r2_score_correlation(wells)
@@ -52,4 +46,10 @@ print(f"lag {best_lag:.4f}")
 best_lag_plot = las.well_shifting(cutted[2], best_lag)
 plots.plot_two_las(wells[0], best_lag_plot, title_name="NCC")
 
-
+#DTW
+print("WELLS", wells)
+record_plots = corr.dtw_distance_correlation(wells)
+print(len(record_plots))
+for i, well in enumerate(record_plots):
+    if i == 1:
+        plots.plot_two_las(wells[0], well, title_name="DTW")
