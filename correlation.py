@@ -8,7 +8,7 @@ import math
 from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
 
-def r2_score_correlation(wells):
+def r2_score_correlation(wells, plot = False):
     record_plots = []
     for i in range(len(wells) - 1):
         min_distance = -9999
@@ -26,7 +26,8 @@ def r2_score_correlation(wells):
                 min_distance = distance
                 record_k = k
         percentage = 1 / math.exp(min_distance) * 100
-        plots.print_k_shifting(range(-50, 51), k_graph)
+        if plot:
+            plots.print_k_shifting(range(-50, 51), k_graph, maximum=False)
         print(f"Minimum distance {min_distance:.4f} at value {record_k} (lower = more similar)")
         min_distance_plot = las.cut_depth_wells(las.wells_shifted(wells, record_k))[i + 1]
         record_plots.append(min_distance_plot)
@@ -47,7 +48,7 @@ def normalized_cross_correlation(x, y):
 
     return best_lag, corr
 
-def dtw_distance_correlation(wells):
+def dtw_distance_correlation(wells, plot = False):
     record_plots = []
     for i in range(len(wells) - 1):
         min_distance = float('inf')
@@ -58,7 +59,6 @@ def dtw_distance_correlation(wells):
             moved_wells = las.wells_shifted(wells, k)
             cutted = las.cut_depth_wells(moved_wells)
             cutted_to_np = las.cutted_to_np(cutted)
-            print(cutted_to_np, cutted_to_np[0], cutted_to_np[i + 1])
             distance, _ = fastdtw(cutted_to_np[0], cutted_to_np[i + 1])
             k_graph.append(distance)
 
@@ -67,7 +67,8 @@ def dtw_distance_correlation(wells):
                 record_k = k
 
         similarity_score = 1 / (1 + min_distance) * 100  # convert to similarity-like %
-        plots.print_k_shifting(range(-50, 51), k_graph)
+        if plot:
+            plots.print_k_shifting(range(-50, 51), k_graph, maximum = False)
 
         print(f"Minimum DTW distance {min_distance:.4f} at k={record_k} (lower = more similar)")
         print(f"Similarity: {similarity_score:.2f}%")

@@ -48,6 +48,7 @@ def wells_shifted(wells, k = 0):
 def cut_depth_wells(wells):
     min_depth = wells[0]['DEPT'].min()
     max_depth = wells[0]['DEPT'].max()
+    cutted_wells = []
     for well in wells:
         if well['DEPT'].min() > min_depth:
             min_depth = well['DEPT'].min()
@@ -55,8 +56,8 @@ def cut_depth_wells(wells):
             max_depth = well['DEPT'].max()
     for i, well in enumerate(wells):
         well_cutted = well[(well['DEPT'] >= 1000) & (well['DEPT'] <= max_depth)]
-        wells[i] = well_cutted
-    return wells
+        cutted_wells.append(well_cutted)
+    return cutted_wells
 
 def cutted_to_np(wells):
     '''

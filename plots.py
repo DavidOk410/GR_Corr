@@ -38,14 +38,17 @@ def plot_two_las(injector, well, label1="Curve 1", label2="Curve 2", title_name=
 
 
 
-def print_k_shifting(k_values, distances, title_name = "Title"):
+def print_k_shifting(k_values, distances, maximum = True, title_name = "Title"):
     plt.figure(figsize=(10, 5))
     plt.plot(k_values, distances, marker='o', linestyle='-')
     plt.title(title_name)
     plt.xlabel("Shift k")
     plt.ylabel("Euclidean Distance")
     plt.grid(True)
-    plt.axvline(x=k_values[distances.index(max(distances))], color='red', linestyle='--', label='Min Distance')
+    if maximum:
+        plt.axvline(x=k_values[distances.index(max(distances))], color='red', linestyle='--', label='Min Distance')
+    else:
+        plt.axvline(x=k_values[distances.index(min(distances))], color='red', linestyle='--', label='Min Distance')
     plt.xlim(left=-51, right=51)
     plt.legend()
     plt.show()
