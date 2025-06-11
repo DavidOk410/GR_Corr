@@ -8,8 +8,11 @@ import math
 from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
 
+
+
+
 def r2_score_correlation(wells, plot = False):
-    record_plots = []
+    record_plots = [wells[0]]
     for i in range(len(wells) - 1):
         min_distance = -9999
         record_k = 0
@@ -17,9 +20,10 @@ def r2_score_correlation(wells, plot = False):
 
         k_graph = []
         for k in range(-50, 51):
-            moved_wells = las.wells_shifted(wells, k)
-            cutted = las.cut_depth_wells(moved_wells)
+            cutted = las.correct_wells(wells, k)
+            print(cutted[1])
             cutted_to_np = las.cutted_to_np(cutted)
+            print("LEN ARRAY", len(cutted_to_np))
             distance = sk.metrics.r2_score(cutted_to_np[0], cutted_to_np[i + 1])
             k_graph.append(distance)
             if distance > min_distance:
@@ -42,22 +46,20 @@ def normalized_cross_correlation(x, y):
     corr /= len(x)  # Normalize by signal length (optional)
 
     lags = np.arange(-len(x) + 1, len(x))
-    print(np.mean(lags))
     best_lag = lags[np.argmax(corr)]
     best_corr = np.max(corr)
 
     return best_lag, corr
 
 def dtw_distance_correlation(wells, plot = False):
-    record_plots = []
+    record_plots = [wells[0]]
     for i in range(len(wells) - 1):
         min_distance = float('inf')
         record_k = 0
         k_graph = []
 
         for k in range(-50, 51):
-            moved_wells = las.wells_shifted(wells, k)
-            cutted = las.cut_depth_wells(moved_wells)
+            cutted = las.correct_wells(wells, k)
             cutted_to_np = las.cutted_to_np(cutted)
             distance, _ = fastdtw(cutted_to_np[0], cutted_to_np[i + 1])
             k_graph.append(distance)

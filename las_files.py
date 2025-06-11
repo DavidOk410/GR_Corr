@@ -59,6 +59,21 @@ def cut_depth_wells(wells):
         cutted_wells.append(well_cutted)
     return cutted_wells
 
+def normalize_ray(wells):
+    normalized_wells = []
+    for i, well in enumerate(wells):
+        min_GR = well['GR'].min()
+        max_GR = well['GR'].max()
+        zero_point = (max_GR - min_GR) / 2 + min_GR
+        normalized_well_DEPT = well['DEPT']
+        normalized_well_GR = (well['GR'] - zero_point) / ((max_GR - min_GR)/2)
+        normalized_well = pd.DataFrame({
+                'DEPT': normalized_well_DEPT.to_numpy(),
+                'GR': normalized_well_GR.to_numpy()
+            })
+        normalized_wells.append(normalized_well)
+    return normalized_wells
+
 def cutted_to_np(wells):
     '''
     :param wells: cutted wells in DataFrame format
@@ -69,6 +84,11 @@ def cutted_to_np(wells):
         gr_arrays.append(well['GR'].to_numpy())
     return gr_arrays
 
+def correct_wells(wells, k_shift = 0):
+    moved_wells = wells_shifted(wells, k_shift)
+    cutted = cut_depth_wells(moved_wells)
+    normalized_wells = normalize_ray(cutted)
+    return normalized_wells
 
 def well_multiplier(well, required_step):
     '''

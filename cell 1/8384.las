@@ -109,7 +109,7 @@ TLFamily_VSH_SP    .         Shale Volume                  :
 #
 #LOGNAME           .UNIT     LOG_ID                        : DESCRIPTION
 #_______________________________________________________________________________
-MD                 .M                                      :  
+DEPT                 .M                                      :  
 CALI               .MM                                     : Кавернометрия 
 COLL               .unitless                               : Описание 
 CSAT               .unitless                               : Описание 

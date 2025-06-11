@@ -31,9 +31,10 @@ def plot_two_las(injector, well, label1="Curve 1", label2="Curve 2", title_name=
     plt.ylabel("DEPT")
     plt.title(title_name)
     plt.ylim(top=1000)
-    plt.xlim(left=0)
+    plt.xlim(left=-1)
     plt.grid(True)
     plt.legend()
+    plt.savefig('graphs\my_plot.png')
     plt.show()
 
 

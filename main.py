@@ -8,50 +8,76 @@ import parsing as pars
 import plots
 import correlation as corr
 import matplotlib.pyplot as plt
+import input as inp
 
 window_size = 200
 window_step = 100 #15 fits the best
 
+cell1_paths = ["D:\Python\GR_Corr\\cell 1\INJ_7276.las",
+                   "D:\Python\GR_Corr\\cell 1\\1437.las",
+                   "D:\Python\GR_Corr\\cell 1\\1666.las",
+                   "D:\Python\GR_Corr\\cell 1\\1683.las",
+                   "D:\Python\GR_Corr\\cell 1\\1784.las",
+                   "D:\Python\GR_Corr\\cell 1\\3668.las",
+                   "D:\Python\GR_Corr\\cell 1\\3894.las",
+                   "D:\Python\GR_Corr\\cell 1\\4055.las",
+                   "D:\Python\GR_Corr\\cell 1\\8384.las",
+                   "D:\Python\GR_Corr\\cell 1\\9671.las"]
+
+cell2_paths = ["D:\Python\GR_Corr\\cell 2\\INJ_6838.las",
+                   "D:\Python\GR_Corr\\cell 2\\1673.las",
+                   "D:\Python\GR_Corr\\cell 2\\1804.las",
+                   "D:\Python\GR_Corr\\cell 2\\2389.las",
+                   "D:\Python\GR_Corr\\cell 2\\3896.las",
+                   "D:\Python\GR_Corr\\cell 2\\7768.las",
+                   "D:\Python\GR_Corr\\cell 2\\8435.las",
+                   "D:\Python\GR_Corr\\cell 2\\8446.las"]
 
 # Разбиение на окна
-injector = pars.parse_transformation("D:\Python\GR_Corr\\1 cell\GR_7276_inj.las")
-well3894 = pars.parse_transformation("D:\Python\GR_Corr\\1 cell\GR_3894.las", False, injector)
-well8480 = pars.parse_transformation("D:\Python\GR_Corr\\1 cell\GR_8480.las", False, injector)
-well24402 = pars.parse_transformation("D:\Python\GR_Corr\\2 cell\GR_24402.las", False, injector)
-well2389 = pars.parse_transformation("D:\Python\GR_Corr\\2 cell\GR_2389.las", False, injector)
 
-plots.clear_plots()
-plt.clf()     # Clears the current figure
-plt.cla()     # Clears the current axes
-plt.close()
+chosen_well = [1, 2, 3, 4, 5, 6, 7]
 
-wells = [injector, well3894, well8480, well24402, well2389]
 
-chosen_well = 2
-cutted = las.cut_depth_wells(wells)
+wells, wells_name = inp.transform_cell(cell2_paths)
+ #= [all_wells[0], all_wells[chosen_well]]
+normalized_wells = las.normalize_ray(wells)
+cutted_normalized = las.cut_depth_wells(normalized_wells)
+#ill use it for correlations
+'''for well in normalized_wells:
+    print("NORM WELL", well)'''
+
 #DTW
-print("WELLS", wells)
-record_plots = corr.dtw_distance_correlation(wells)
-print(len(record_plots))
-for i, well in enumerate(record_plots):
-    if i == chosen_well - 1:
-        plots.plot_two_las(cutted[0], well, title_name="DTW")
-
+'''record_plots_DTW = corr.dtw_distance_correlation(normalized_wells)
+for i, well in enumerate(record_plots_DTW):
+    if i in chosen_well:
+        plots.plot_two_las(cutted_normalized[0], well, title_name=f"DTW WELL N{i}")
+'''
 # R2 SCORE PRINT
-record_plots = corr.r2_score_correlation(wells)
-print(len(record_plots))
-for i, well in enumerate(record_plots):
-    if i == chosen_well - 1:
-        plots.plot_two_las(cutted[0], well, title_name="R2_SCORE")
+record_plots_R2 = corr.r2_score_correlation(normalized_wells)
+for i, well in enumerate(record_plots_R2):
+    if i in chosen_well:
+        plots.plot_two_las(cutted_normalized[0], well, title_name=f"R2_SCORE WELL N{i}")
 
-#NORMALIZE CROSS CORRELATION
+#Normalized Initial Well
+for i, well in enumerate(cutted_normalized):
+    if i in chosen_well:
+        plots.plot_two_las(cutted_normalized[0], well, title_name=f"Normalized Initial WELL N{i}")
+
+#Simple Initial Well
 cutted = las.cut_depth_wells(wells)
-copy = cutted.copy()
-plots.plot_two_las(cutted[0], copy[chosen_well], title_name="Initial") #INITIAL
-cutted_to_np = las.cutted_to_np(cutted)
-best_lag, corr = corr.normalized_cross_correlation(cutted_to_np[0], cutted_to_np[chosen_well])
-print(f"lag {best_lag:.4f}")
-best_lag_plot = las.well_shifting(cutted[chosen_well], best_lag)
-plots.plot_two_las(cutted[0], best_lag_plot, title_name="NCC")
+for i, well in enumerate(cutted):
+    if i in chosen_well:
+        plots.plot_two_las(cutted[0], well, title_name=f"Initial WELL N{i}")
 
+'''
+# NORMALIZE CROSS CORRELATION
+normalized_cutted_to_np = las.cutted_to_np(cutted_normalized)
+print(len(normalized_cutted_to_np), normalized_cutted_to_np)
+for i, well in enumerate(cutted_normalized):
+    if i in chosen_well:
+        best_lag, correl = corr.normalized_cross_correlation(normalized_cutted_to_np[0], normalized_cutted_to_np[i])
+        print(f"NCC best_lag {best_lag:.4f}")
+        best_lag_plot = las.well_shifting(well, best_lag)
+        plots.plot_two_las(cutted_normalized[0], best_lag_plot, title_name=f"NCC WELL N{i}")
+'''
 
