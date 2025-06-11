@@ -1,4 +1,5 @@
 import parsing as pars
+import las_files as las
 from pathlib import Path
 
 path = "D:\Python\GR_Corr\\cell 1\INJ_7276.las"
@@ -12,10 +13,10 @@ def transform_cell(wells_paths):
     wells_name = []
     for i, well in enumerate(wells_paths):
         if i == 0:
-            wells.append(pars.parse_transformation(well))
+            wells.append(las.las_read_path(well))
             wells_name.append(Path(well).stem)
         else:
-            wells.append(pars.parse_transformation(well, False, wells[0]))
+            wells.append(las.las_read_path(well))
             wells_name.append(Path(well).stem)
     print(wells_name)
     return wells, wells_name

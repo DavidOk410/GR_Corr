@@ -21,9 +21,8 @@ def r2_score_correlation(wells, plot = False):
         k_graph = []
         for k in range(-50, 51):
             cutted = las.correct_wells(wells, k)
-            print(cutted[1])
+            #print(cutted[1])
             cutted_to_np = las.cutted_to_np(cutted)
-            print("LEN ARRAY", len(cutted_to_np))
             distance = sk.metrics.r2_score(cutted_to_np[0], cutted_to_np[i + 1])
             k_graph.append(distance)
             if distance > min_distance:

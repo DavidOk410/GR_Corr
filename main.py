@@ -39,8 +39,10 @@ chosen_well = [1, 2, 3, 4, 5, 6, 7]
 
 
 wells, wells_name = inp.transform_cell(cell2_paths)
+wells_interpolate = pars.wells_interpolation(wells)
+wells_compressed  = las.apply_multiplier(wells_interpolate)
  #= [all_wells[0], all_wells[chosen_well]]
-normalized_wells = las.normalize_ray(wells)
+normalized_wells = las.normalize_ray(wells_compressed)
 cutted_normalized = las.cut_depth_wells(normalized_wells)
 #ill use it for correlations
 '''for well in normalized_wells:
@@ -53,10 +55,13 @@ for i, well in enumerate(record_plots_DTW):
         plots.plot_two_las(cutted_normalized[0], well, title_name=f"DTW WELL N{i}")
 '''
 # R2 SCORE PRINT
-record_plots_R2 = corr.r2_score_correlation(normalized_wells)
-for i, well in enumerate(record_plots_R2):
-    if i in chosen_well:
-        plots.plot_two_las(cutted_normalized[0], well, title_name=f"R2_SCORE WELL N{i}")
+try:
+    record_plots_R2 = corr.r2_score_correlation(cutted_normalized)
+    for i, well in enumerate(record_plots_R2):
+        if i in chosen_well:
+            plots.plot_two_las(cutted_normalized[0], well, title_name=f"R2_SCORE WELL N{i}")
+except:
+    print(cutted_normalized)
 
 #Normalized Initial Well
 for i, well in enumerate(cutted_normalized):

@@ -1,13 +1,14 @@
 import lasio
 import pandas as pd
 import numpy as np
+import math
 
 def las_read_path(path):
     pd.set_option('display.max_columns', None)
     las = lasio.read(path)
     return las
 
-def ratio_inj_well(injector, well):
+def apply_multiplier(wells):
     '''
     input: injectorArray, wellArray (with DEPT and GR attributes)
     compare steps of injector with well
@@ -15,17 +16,18 @@ def ratio_inj_well(injector, well):
     elif injector's step is smaller, cut the inj's step
     :return true:
     '''
-    inj_step = injector['DEPT'][1] - injector['DEPT'][0]
-    well_step = well['DEPT'][1] - well['DEPT'][0]
-    multiplier = inj_step / well_step
-    return int(multiplier)
+    max_step = wells[0]['DEPT'][1] - wells[0]['DEPT'][0]
+    for well in wells:
+        well_step = well['DEPT'][1] - well['DEPT'][0]
+        if well_step > max_step:
+            max_step = well_step
+    for i, well in enumerate(wells):
+        well_step = well['DEPT'][1] - well['DEPT'][0]
+        if well_step < max_step:
+            multiplier = int(max_step / well_step)
+            wells[i] = compress_well_multiplier(well, multiplier)
+    return wells
 
-def apply_multiplier(injector, well, multiplier):
-    if multiplier > 1:
-        well = compress_well_multiplier(well, multiplier)
-    elif 1 > multiplier > 0:
-        injector = compress_well_multiplier(injector, multiplier)
-    return injector, well
 
 def compress_well_multiplier(well, multiplier):
     well_np = well.to_numpy()
@@ -46,7 +48,7 @@ def wells_shifted(wells, k = 0):
     return moved_wells
 
 def cut_depth_wells(wells):
-    min_depth = wells[0]['DEPT'].min()
+    min_depth = 1000
     max_depth = wells[0]['DEPT'].max()
     cutted_wells = []
     for well in wells:
@@ -55,7 +57,7 @@ def cut_depth_wells(wells):
         elif well['DEPT'].max() < max_depth:
             max_depth = well['DEPT'].max()
     for i, well in enumerate(wells):
-        well_cutted = well[(well['DEPT'] >= 1000) & (well['DEPT'] <= max_depth)]
+        well_cutted = well[(well['DEPT'] >= min_depth) & (well['DEPT'] <= max_depth)]
         cutted_wells.append(well_cutted)
     return cutted_wells
 

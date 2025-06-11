@@ -1,6 +1,7 @@
 
 import pandas as pd
 import numpy as np
+import math
 
 import las_files as las
 
@@ -14,23 +15,19 @@ def create_windows(data: np.ndarray, window_size: int, window_step: int) -> np.n
     windows = np.lib.stride_tricks.sliding_window_view(data, window_size)
     return windows[::window_step]
 
-def parse_transformation(well, if_inj = True, inj = pd.DataFrame()):
+def wells_interpolation(wells):
     '''
     No cutting happens in this function, only making LAS-file a DataFrame without NaN values
     :param well: address of LAS-file
     :param if_inj: if it is one
     :return:
     '''
-    well = las.las_read_path(well)
-    well_compr = well.df().reset_index()[['DEPT', 'GR']]
-    if if_inj:
-        return well_compr
-    if not if_inj:
-        multiplier = las.ratio_inj_well(inj, well_compr)
-        inj_compr, well_compr = las.apply_multiplier(inj, well_compr, multiplier)
-        inj_compr['GR'] = inj_compr['GR'].interpolate(method='linear').fillna(0)
-        well_compr['GR'] = well_compr['GR'].interpolate(method='linear').fillna(0)
-        return well_compr
+    for i, well in enumerate(wells):
+        well_two_column = well.df().reset_index()[['DEPT', 'GR']]
+        well_two_column['GR'] = well_two_column['GR'].interpolate(method='linear').fillna(0)
+        well_two_column['DEPT'] = well_two_column['DEPT'].round(1)
+        wells[i] = well_two_column
+    return wells
 
 def prepare_train_data(wells, injector, window_size, window_step, pos = True):
     '''
